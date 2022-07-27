@@ -1,4 +1,6 @@
-require "test_helper"
+# frozen_string_literal: true
+
+require 'test_helper'
 
 class SessionsHelperTest < ActionView::TestCase
   # Define user and call remember method
@@ -7,12 +9,12 @@ class SessionsHelperTest < ActionView::TestCase
     remember(@user)
   end
   # Verify that current_user = given user
-  test "current_user returns right user when session is nil" do
+  test 'current_user returns right user when session is nil' do
     assert_equal @user, current_user
     assert is_logged_in?
   end
 
-  test "current_user returns nil when remember digest is wrong" do
+  test 'current_user returns nil when remember digest is wrong' do
     @user.update_attribute(:remember_digest, User.digest(User.new_token))
     assert_nil current_user
   end

@@ -1,5 +1,31 @@
+# frozen_string_literal: true
+
+# == Schema Information
+#
+# Table name: users
+#
+#  id                :integer          not null, primary key
+#  activated         :boolean          default(FALSE)
+#  activated_at      :datetime
+#  activation_digest :string
+#  admin             :boolean          default(FALSE)
+#  email             :string
+#  name              :string
+#  password_digest   :string
+#  remember_digest   :string
+#  reset_digest      :string
+#  reset_sent_at     :datetime
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#
+# Indexes
+#
+#  index_users_on_email  (email) UNIQUE
+#
 class User < ApplicationRecord
+  has_many :microposts, dependent: :destroy
   attr_accessor :remember_token, :activation_token, :reset_token
+
   before_save   :downcase_email
   before_create :create_activation_digest
   validates :name,  presence: true, length: { maximum: 50 }
@@ -13,9 +39,12 @@ class User < ApplicationRecord
   class << self
     # Returns the hash digest of the given string.
     def digest(string)
-      cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
-                                                    BCrypt::Engine.cost
-      BCrypt::Password.create(string, cost: cost)
+      cost = if ActiveModel::SecurePassword.min_cost
+               BCrypt::Engine::MIN_COST
+             else
+               BCrypt::Engine.cost
+             end
+      BCrypt::Password.create(string, cost:)
     end
 
     # Returns a random token.
@@ -41,6 +70,7 @@ class User < ApplicationRecord
   def authenticated?(attribute, token)
     digest = send("#{attribute}_digest")
     return false if digest.nil?
+
     BCrypt::Password.new(digest).is_password?(token)
   end
 
@@ -77,16 +107,22 @@ class User < ApplicationRecord
     reset_sent_at < 2.hours.ago
   end
 
+  # Defines a proto-feed.
+  # See "Following users" for the full implementation.
+  def feed
+    Micropost.where("user_id = ?", id)
+  end
+
   private
 
-    # Converts email to all lowercase.
-    def downcase_email
-      self.email = email.downcase
-    end
+  # Converts email to all lowercase.
+  def downcase_email
+    self.email = email.downcase
+  end
 
-    # Creates and assigns the activation token and digest.
-    def create_activation_digest
-      self.activation_token  = User.new_token
-      self.activation_digest = User.digest(activation_token)
-    end
+  # Creates and assigns the activation token and digest.
+  def create_activation_digest
+    self.activation_token  = User.new_token
+    self.activation_digest = User.digest(activation_token)
+  end
 end
