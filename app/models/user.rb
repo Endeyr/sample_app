@@ -24,12 +24,12 @@
 #
 class User < ApplicationRecord
   has_many :microposts, dependent: :destroy
-  has_many :active_relationships, class_name:  "Relationship",
-                                  foreign_key: "follower_id",
-                                  dependent:   :destroy
-  has_many :passive_relationships, class_name:  "Relationship",
-                                   foreign_key: "followed_id",
-                                   dependent:   :destroy
+  has_many :active_relationships, class_name: 'Relationship',
+                                  foreign_key: 'follower_id',
+                                  dependent: :destroy
+  has_many :passive_relationships, class_name: 'Relationship',
+                                   foreign_key: 'followed_id',
+                                   dependent: :destroy
   has_many :following, through: :active_relationships,  source: :followed
   has_many :followers, through: :passive_relationships, source: :follower
   attr_accessor :remember_token, :activation_token, :reset_token
@@ -117,9 +117,9 @@ class User < ApplicationRecord
 
   # Returns a user's status feed.
   def feed
-    part_of_feed = "relationships.follower_id = :id or microposts.user_id = :id"
+    part_of_feed = 'relationships.follower_id = :id or microposts.user_id = :id'
     Micropost.left_outer_joins(user: :followers)
-             .where(part_of_feed, { id: id }).distinct
+             .where(part_of_feed, { id: }).distinct
              .includes(:user, image_attachment: :blob)
   end
 

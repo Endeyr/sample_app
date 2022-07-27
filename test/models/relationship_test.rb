@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: relationships
@@ -14,7 +16,7 @@
 #  index_relationships_on_follower_id                  (follower_id)
 #  index_relationships_on_follower_id_and_followed_id  (follower_id,followed_id) UNIQUE
 #
-require "test_helper"
+require 'test_helper'
 
 class RelationshipTest < ActiveSupport::TestCase
   def setup
@@ -22,16 +24,16 @@ class RelationshipTest < ActiveSupport::TestCase
                                      followed_id: users(:archer).id)
   end
 
-  test "should be valid" do
+  test 'should be valid' do
     assert @relationship.valid?
   end
 
-  test "should require a follower_id" do
+  test 'should require a follower_id' do
     @relationship.follower_id = nil
     assert_not @relationship.valid?
   end
 
-  test "should require a followed_id" do
+  test 'should require a followed_id' do
     @relationship.followed_id = nil
     assert_not @relationship.valid?
   end

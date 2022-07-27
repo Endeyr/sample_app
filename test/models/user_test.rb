@@ -107,7 +107,7 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  test "should follow and unfollow a user" do
+  test 'should follow and unfollow a user' do
     michael = users(:michael)
     archer  = users(:archer)
     assert_not michael.following?(archer)
@@ -120,7 +120,7 @@ class UserTest < ActiveSupport::TestCase
     assert_not michael.following?(michael)
   end
 
-  test "feed should have the right posts" do
+  test 'feed should have the right posts' do
     michael = users(:michael)
     archer  = users(:archer)
     lana    = users(:lana)
